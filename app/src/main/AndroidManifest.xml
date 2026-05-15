@@ -16,10 +16,10 @@
         android:theme="@style/Theme.Pr18"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".BasketActivity"
+            android:name=".presentations.BasketActivity"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".presentations.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
