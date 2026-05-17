@@ -10,106 +10,110 @@ import androidx.annotation.Nullable;
 
 import com.example.network.datas.orders.OrderGet;
 import com.example.network.domains.callbacks.MyResponseCallback;
+import com.example.network.domains.models.Order;
+import com.example.pr18.R;
 import com.example.pr18.domains.NotifyManager;
 import com.example.pr18.presentations.BasketActivity;
 import com.google.gson.GsonBuilder;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 public class OrderService extends Service {
 
-    public Integer id;
-    String TAG = "ORDER SERVICE";
-    Integer Interval = 30 * 1000;
-    Handler handler = new Handler();
-    ExecutorService executorService = Executors.newSingleThreadExecutor();
-    NotifyManager notifyManager;
+    private static final String TAG = "ORDER SERVICE";
+    private static final int INTERVAL = 30 * 1000;
 
-    Runnable CheckStatusRunnable = new Runnable() {
+    private Integer id;
+    private final Handler handler = new Handler();
+    private NotifyManager notifyManager;
 
+    private final Runnable checkStatusRunnable = new Runnable() {
         @Override
         public void run() {
+            if (id == null || id <= 0) {
+                Log.e(TAG, "Order id is empty");
+                stopSelf();
+                return;
+            }
 
-            OrderGet ResponseOrderGet = new OrderGet(
+            OrderGet responseOrderGet = new OrderGet(
                     id,
                     BasketActivity.TOKEN,
                     new MyResponseCallback() {
                         @Override
                         public void onCompile(String result) {
-                            Order OrderData = new GsonBuilder().create().fromJson(result, Order.class);
-                            if (OrderData.status == 1) {
+                            Order orderData = new GsonBuilder().create().fromJson(result, Order.class);
+                            if (orderData == null) {
+                                handler.postDelayed(checkStatusRunnable, INTERVAL);
+                                return;
+                            }
 
-                                Integer AllSum = 0;
-                                for (int i = 0; i < OrderData.products.size(); i++) {
+                            if (orderData.status == 1) {
+                                int allSum = 0;
+                                int productsCount = orderData.products == null ? 0 : orderData.products.size();
 
-                                    AllSum += OrderData.products.get(i).product.price * OrderData.products.get(i).count;
-
+                                for (int i = 0; i < productsCount; i++) {
+                                    if (orderData.products.get(i).product != null) {
+                                        allSum += orderData.products.get(i).product.price
+                                                * orderData.products.get(i).count;
+                                    }
                                 }
 
-                                notifyManager.SendNotify(
-                                        "Ваш заказ, на сумму: " + AllSum +
-                                                " состоящий из " + OrderData.products.size() +
-                                                " товаров, успешно доставлен.");
-
+                                notifyManager.SendNotify(getString(
+                                        R.string.order_delivered_message,
+                                        allSum,
+                                        productsCount
+                                ));
+                                stopSelf();
                             } else {
-                                handler.postDelayed(CheckStatusRunnable, Interval);
+                                handler.postDelayed(checkStatusRunnable, INTERVAL);
                             }
                         }
 
                         @Override
                         public void onError(String error) {
-
                             Log.e(TAG, error);
-
+                            handler.postDelayed(checkStatusRunnable, INTERVAL);
                         }
                     }
             );
-            ResponseOrderGet.execute();
-
+            responseOrderGet.execute();
         }
-
     };
 
     @Override
     public void onCreate() {
-
         super.onCreate();
         notifyManager = new NotifyManager(this);
         Log.d(TAG, "Service created");
-
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        handler.removeCallbacks(checkStatusRunnable);
 
-        handler.removeCallbacks(CheckStatusRunnable);
-        handler.post(CheckStatusRunnable);
-        if(intent != null && intent.hasExtra("id")) {
-
+        if (intent != null && intent.hasExtra("id")) {
             id = intent.getIntExtra("id", -1);
-
         }
-        return START_STICKY;
 
+        if (id == null || id <= 0) {
+            Log.e(TAG, "Order id is empty");
+            stopSelf(startId);
+            return START_NOT_STICKY;
+        }
+
+        handler.post(checkStatusRunnable);
+        return START_STICKY;
     }
 
     @Override
     public void onDestroy() {
-
-
         super.onDestroy();
-        handler.removeCallbacks(CheckStatusRunnable);
-        executorService.shutdown();
-        Log.d(TAG, "Service destoyed");
+        handler.removeCallbacks(checkStatusRunnable);
+        Log.d(TAG, "Service destroyed");
     }
-
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-
         return null;
-
     }
 }

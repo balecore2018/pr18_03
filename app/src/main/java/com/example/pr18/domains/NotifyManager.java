@@ -1,7 +1,6 @@
 package com.example.pr18.domains;
 
 import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -12,55 +11,61 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
 import com.example.pr18.R;
-import com.example.pr18.presentations.MainActivity;
+import com.example.pr18.presentations.BasketActivity;
 
 public class NotifyManager {
 
-    String CHANNEL_ID = "Matule_Channel";
-    Context context;
+    private static final String CHANNEL_ID = "Matule_Channel";
+
+    private final Context context;
+
     public NotifyManager(Context context) {
-
         this.context = context;
-
     }
 
     public void SendNotify(String message) {
-
         if (PermissionManager.CheckPermission(context) != PackageManager.PERMISSION_GRANTED) {
-
             return;
-
         }
 
         CreateNotificationChannel();
-        Intent NotifyIntent = new Intent(context, MainActivity.class);
-        PendingIntent ContentIntent = PendingIntent.getActivity(context, 0, NotifyIntent, PendingIntent.FLAG_IMMUTABLE);
-        NotificationCompat.Builder Builder = new NotificationCompat.Builder(context, CHANNEL_ID);
-        Builder.setSmallIcon(R.drawable.icon);
-        Builder.setContentTitle("Заказ доставлен");
-        Builder.setContentText(message);
-        Builder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
-        Builder.setContentIntent(ContentIntent);
-        NotificationManagerCompat NotifyManager = NotificationManagerCompat.from(context);
-        NotifyManager.notify(100, Builder.build());
+
+        Intent notifyIntent = new Intent(context, BasketActivity.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(
+                context,
+                0,
+                notifyIntent,
+                PendingIntent.FLAG_IMMUTABLE
+        );
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID);
+        builder.setSmallIcon(R.drawable.icon);
+        builder.setContentTitle(context.getString(R.string.order_delivered_title));
+        builder.setContentText(message);
+        builder.setStyle(new NotificationCompat.BigTextStyle().bigText(message));
+        builder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
+        builder.setContentIntent(contentIntent);
+        builder.setAutoCancel(true);
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+        notificationManager.notify(100, builder.build());
     }
 
     public void CreateNotificationChannel() {
-
-        NotificationChannel channel = null;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            channel = new NotificationChannel(
-                    CHANNEL_ID,
-                    "Matule",
-                    NotificationManager.IMPORTANCE_DEFAULT
-            );
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            return;
         }
-        android.app.NotificationManager NotifyManager =
+
+        NotificationChannel channel = new NotificationChannel(
+                CHANNEL_ID,
+                "Matule",
+                android.app.NotificationManager.IMPORTANCE_DEFAULT
+        );
+
+        android.app.NotificationManager notificationManager =
                 context.getSystemService(android.app.NotificationManager.class);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotifyManager.createNotificationChannel(channel);
+        if (notificationManager != null) {
+            notificationManager.createNotificationChannel(channel);
         }
-
     }
-
 }

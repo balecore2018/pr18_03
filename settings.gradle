@@ -25,4 +25,3 @@ dependencyResolutionManagement {
 rootProject.name = "pr18"
 include ':app'
 include ':network'
-include ':network'

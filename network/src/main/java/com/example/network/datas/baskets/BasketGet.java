@@ -7,7 +7,8 @@ import com.example.network.domains.common.Settings;
 import org.jsoup.Jsoup;
 
 import java.io.IOException;
-import java.sql.Connection;
+
+import org.jsoup.Connection;
 
 public class BasketGet extends MyAsyncTask {
 
@@ -25,7 +26,7 @@ public class BasketGet extends MyAsyncTask {
 
         try {
 
-            Connection.Response response = Jsoup.connect(Settings.URL + "api/basket/get")
+            Connection.Response response = Jsoup.connect(Settings.URL + "/api/basket/get")
                     .ignoreContentType(true)
                     .ignoreHttpErrors(true)
                     .method(Connection.Method.GET)

@@ -9,7 +9,8 @@ import com.google.gson.GsonBuilder;
 import org.jsoup.Jsoup;
 
 import java.io.IOException;
-import java.sql.Connection;
+
+import org.jsoup.Connection;
 
 public class BasketUpdate extends MyAsyncTask {
 
@@ -32,12 +33,13 @@ public class BasketUpdate extends MyAsyncTask {
 
         try {
 
-            Connection.Response response = Jsoup.connect(Settings.URL + "api/basket/update")
+            Connection.Response response = Jsoup.connect(Settings.URL + "/api/basket/update")
                     .ignoreContentType(true)
                     .ignoreHttpErrors(true)
                     .method(Connection.Method.PUT)
                     .header("Content-type", "application/json")
                     .header("token", token)
+                    .requestBody(rawData)
                     .execute();
 
             return response.statusCode() == 200 ? response.body() : "Error: " + response.body();

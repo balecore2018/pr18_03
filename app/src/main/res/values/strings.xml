@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">pr18</string>
+    <string name="order_created_message">Заказ успешно оформлен, при изменении статуса Вам придет уведомление</string>
+    <string name="order_delivered_title">Заказ доставлен</string>
+    <string name="order_delivered_message">Ваш заказ на сумму %1$d ₽, состоящий из %2$d товаров, успешно доставлен.</string>
+    <string name="basket_price_format">%1$d ₽</string>
+    <string name="basket_count_format">%1$d шт.</string>
+    <string name="basket_total_format">%1$d ₽</string>
 </resources>

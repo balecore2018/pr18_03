@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-
+    android:layout_height="wrap_content">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
@@ -13,7 +12,6 @@
         app:cardCornerRadius="12dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.444"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -29,20 +27,21 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
                     android:id="@+id/tvName"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:fontFamily="@font/roboto"
                     android:text="Название"
                     android:textColor="@color/black"
                     android:textSize="16sp"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold" />
+
                 <ImageView
+                    android:id="@+id/bthItemClear"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    android:id="@+id/bthItemClear"
-                    android:src="@drawable/ic_delete"/>
+                    android:src="@drawable/ic_delete" />
 
             </LinearLayout>
 
@@ -63,10 +62,10 @@
                     android:layout_column="0"
                     android:layout_columnWeight="1"
                     android:fontFamily="@font/roboto"
-                    android:text="300"
+                    android:text="300 ₽"
                     android:textColor="@color/black"
                     android:textFontWeight="500"
-                    android:textSize="17sp"/>
+                    android:textSize="17sp" />
 
                 <TextView
                     android:id="@+id/tvCount"
@@ -79,7 +78,7 @@
                     android:text="1 штука"
                     android:textColor="@color/black"
                     android:textFontWeight="500"
-                    android:textSize="17sp"/>
+                    android:textSize="17sp" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -91,20 +90,20 @@
                     android:orientation="horizontal">
 
                     <TextView
+                        android:id="@+id/bthMinus"
                         android:layout_width="32dp"
                         android:layout_height="32dp"
-                        android:id="@+id/bthMinus"
                         android:gravity="center"
                         android:text="-"
-                        android:textSize="19sp"/>
+                        android:textSize="19sp" />
 
                     <TextView
-                        android:layout_width="32dp"
-                        android:layout_height="32sp"
                         android:id="@+id/bthPlus"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
                         android:gravity="center"
                         android:text="+"
-                        android:textSize="19sp"/>
+                        android:textSize="19sp" />
 
                 </LinearLayout>
 
@@ -113,6 +112,5 @@
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
